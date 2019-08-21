@@ -46,4 +46,19 @@ students.post("/register", (req, res) => {
     });
 });
 
+
+//use of async/await
+students.post("/login", async (req, res) => {
+  const result = await Student.findOne({
+    matricule: req.body.matricule
+  });
+  if(result) {
+      if(bcrypt.compareSync(req.body.password, result.password)){
+          res.send('Logged in')
+      } else {
+          res.send('password incorrect !')
+      }
+  }
+});
+
 module.exports = students;
