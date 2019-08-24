@@ -17,6 +17,16 @@ students.post("/register", (req, res) => {
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     password: req.body.password,
+    notes: [
+      { module: "AAW", note: "" },
+      { module: "MSSC", note: "" },
+      { module: "SRI", note: "" },
+      { module: "IGR", note: "" },
+      { module: "MTS", note: "" },
+      { module: "ANGLAIS", note: "" },
+      { module: "GCC", note: "" },
+      { module: "CSE", note: "" }
+    ],
     created: today
   };
 
@@ -46,18 +56,29 @@ students.post("/register", (req, res) => {
     });
 });
 
-
 //use of async/await
 students.post("/login", async (req, res) => {
-  const result = await Student.findOne({
+  const student = await Student.findOne({
     matricule: req.body.matricule
   });
-  if(result) {
-      if(bcrypt.compareSync(req.body.password, result.password)){
-          res.send('Logged in')
-      } else {
-          res.send('password incorrect !')
-      }
+  if (student) {
+    if (bcrypt.compareSync(req.body.password, student.password)) {
+      const payload = {
+        _id: student._id,
+        firstname: student.firstname,
+        lastname: student.lastname,
+        matricule: student.matricule,
+        password: student.password
+      };
+      let token = jwt.sign(payload, process.env.SECRET_KEY, {
+        expiresIn: 1500
+      });
+      res.send(token);
+    } else {
+      res.json({ error: "Username or password incorrect " });
+    }
+  } else {
+    res.json({ error: "Username or password incorrect " });
   }
 });
 
