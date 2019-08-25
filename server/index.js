@@ -11,8 +11,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 //protected routes
-const  ProtectedRoutes = require("./routes/protected") 
-app.use('/api', ProtectedRoutes);
+
+//admin protected route
+const  Admin = require("./routes/admin") 
+app.use('/administration', Admin);
+
+//admin login & register
+const Login = require("./routes/login")
+app.use('/admin', Login)
+
+//student route
+const  ProtectedStudent = require("./routes/protected-student") 
+app.use('/api/student', ProtectedStudent);
 
 //internal requiers
 const students = require("./routes/students");

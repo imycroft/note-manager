@@ -16,7 +16,7 @@ students.post("/register", (req, res) => {
     matricule: req.body.matricule,
     firstname: req.body.firstname,
     lastname: req.body.lastname,
-    password: req.body.password,
+    password: '',
     notes: [
       { module: "AAW", note: "" },
       { module: "MSSC", note: "" },
@@ -71,7 +71,7 @@ students.post("/login", async (req, res) => {
         password: student.password
       };
       let token = jwt.sign(payload, process.env.SECRET_KEY, {
-        expiresIn: 1500
+        expiresIn: 1440
       });
       res.send(token);
     } else {
