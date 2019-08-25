@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const Admin = require("../models/admin");
 
 const admins = express.Router();
-
+process.env.ADMIN_SECRET_KEY = "@/d12Vz!ttMCc*!78";
 admins.post("/register", async (req, res) => {
   const today = new Date();
   const adminData = {
@@ -43,7 +43,7 @@ admins.post("/login", async (req, res) => {
         matricule: admin.matricule,
         password: admin.password
       };
-      let token = jwt.sign(payload, process.env.SECRET_KEY, {
+      let token = jwt.sign(payload, process.env.ADMIN_SECRET_KEY, {
         expiresIn: 1440
       });
       res.send(token);

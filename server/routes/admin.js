@@ -13,7 +13,7 @@ ProtectedRoutes.use((req, res, next) => {
   // decode token
   if (token) {
     // verifies secret and checks if the token is expired
-    jwt.verify(token, process.env.SECRET_KEY, (err, authData) => {
+    jwt.verify(token, process.env.ADMIN_SECRET_KEY, (err, authData) => {
       if (err) {
         return res.json({ message: "invalid token" });
       } else {
