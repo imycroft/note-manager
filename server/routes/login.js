@@ -7,7 +7,10 @@ const Admin = require("../models/admin");
 const admins = express.Router();
 process.env.ADMIN_SECRET_KEY = "@/d12Vz!ttMCc*!78";
 admins.post("/register", async (req, res) => {
-  const today = new Date();
+    Admin.countDocuments({}, function(err, count){
+        console.log( "Number of docs: ", count );
+        if(count == 0) {
+            const today = new Date();
   const adminData = {
     matricule: req.body.matricule,
     firstname: req.body.firstname,
@@ -27,6 +30,10 @@ admins.post("/register", async (req, res) => {
         res.send("Error: " + err);
       });
   });
+        } else 
+        res.status(403).send({ error: "Can't create more admins" });
+    });
+
 });
 
 //Admin login
