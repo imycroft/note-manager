@@ -20,13 +20,19 @@ app.use('/administration', Admin);
 const Login = require("./routes/login")
 app.use('/admin', Login)
 
-//student route
-const  ProtectedStudent = require("./routes/protected-student") 
-app.use('/api/student', ProtectedStudent);
+//professor route
+const professors = require("./routes/professor");
+app.use("/professors", professors);
+//professor protected route
+const  ProtectedProfessor = require("./routes/protected-professor") 
+app.use('/api/professor', ProtectedProfessor);
 
-//internal requiers
+//student routes
 const students = require("./routes/students");
 app.use("/students", students);
+//student protected route
+const  ProtectedStudent = require("./routes/protected-student") 
+app.use('/api/student', ProtectedStudent);
 
 // Connect to the db
 mongoose.connect(
