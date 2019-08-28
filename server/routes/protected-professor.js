@@ -1,7 +1,5 @@
 const express = require("express");
-const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 const Student = require("../models/student");
 const Professor = require("../models/professor");
 
@@ -43,11 +41,11 @@ ProtectedRoutes.get("/notes/:module", async (req, res) => {
   if (modules.includes(req.params.module)) {
     console.log(req.params.module.toUpperCase());
     const studentsNotes = await Student.find(
-      { "notes.module": req.params.module.toUpperCase() },
+      { "modules.module": req.params.module.toUpperCase() },
       {
         firstname: 1,
         lastname: 1,
-        notes: { $elemMatch: { module: req.params.module.toUpperCase() } }
+        modules: { $elemMatch: { module: req.params.module.toUpperCase() } }
       }
     );
     res.send(studentsNotes);
@@ -65,40 +63,51 @@ ProtectedRoutes.post("/notes", async (req, res) => {
     { _id: 0, modules: 1 }
   );
   const modulesArray = avalableModules.map(x => x.modules);
-  const modules = modulesArray[0];
+  const modules = modulesArray[0]; //extract the module's string from the array
   //
   if (modules.includes(req.body.module)) {
     const updatedNotes = await Student.updateOne(
-      { matricule: req.body.studentMatricule, "notes.module": req.body.module.toUpperCase() },
-      { $set: { "notes.$.note": req.body.note } } //check if valide note >=0 <=20
+      {
+        matricule: req.body.studentMatricule,
+        "modules.module": req.body.module.toUpperCase()
+      },
+      { $set: { "modules.$.note": req.body.note } } //check if valide note >=0 <=20
     );
-
-    res.send(updatedNotes);
+    const moy = moyenne(req.body.studentMatricule);
+    res.send({updatedNotes: updatedNotes});
   } else {
     res
       .status(403)
       .send({ error: "You dont have permission to edit this module" });
   }
 });
-
-ProtectedRoutes.get("/marks", async (req, res) => {
-  const studentData = req.authData;
-  const student = await Student.find(
-    { matricule: studentData.matricule },
-    "matricule notes"
+async function moyenne(matricule){
+  const coof = [5, 6, 3, 5, 2, 2, 5, 6];
+  const modulesNotes = await Student.find(
+    { matricule: matricule },
+    { _id: 0, modules: 1 }
   );
-  res.send(student);
-});
-
-//Consulter note par matiere
-ProtectedRoutes.get("/marks/:module", async (req, res) => {
-  const studentData = req.authData;
-  const module = req.params.module; //TODO: check if not null and is a valid module
-  const student = await Student.find(
-    { matricule: studentData.matricule },
-    { notes: { $elemMatch: { module } } }
+  
+  const modulesArray = modulesNotes.map(x => x.modules);
+  const modules = modulesArray[0]; //extract the module's string from the array
+  
+  const notesArray = modules.map(x => x.note);
+  
+  const sum_products = notesArray.reduce( 
+    (sum, val, i) => sum + val * coof[i],
+    0
   );
-  res.send(student);
-});
+  //calculate average
+  const moy = (sum_products / coof.reduce((sum, x) => sum + x));
+  //res.send({ sum: sum_products, moy, fixed: parseFloat(moy.toFixed(2)) });
+  const updateMoyenne = await Student.updateOne(
+    {
+      matricule: matricule
+     
+    },
+    { $set: { "PV_final.Moyenne": parseFloat(moy.toFixed(2)) } } 
+  );
+
+};
 
 module.exports = ProtectedRoutes;

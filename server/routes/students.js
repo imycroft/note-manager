@@ -17,16 +17,21 @@ students.post("/register", (req, res) => {
     firstname: req.body.firstname,
     lastname: req.body.lastname,
     password: '',
-    notes: [
-      { module: "AAW", note: "" },
-      { module: "MSSC", note: "" },
-      { module: "SRI", note: "" },
-      { module: "IGR", note: "" },
-      { module: "MTS", note: "" },
-      { module: "ANGLAIS", note: "" },
-      { module: "GCC", note: "" },
-      { module: "CSE", note: "" }
+    modules: [
+      { module: "AAW", note: "", pv: "" },
+      { module: "MSSC", note: "", pv: "" },
+      { module: "SRI", note: "", pv: "" },
+      { module: "IGR", note: "", pv: "" },
+      { module: "MTS", note: "", pv: "" },
+      { module: "ANGLAIS", note: "", pv: "" },
+      { module: "GCC", note: "", pv: "" },
+      { module: "CSE", note: "", pv: "" }
     ],
+    PV_final: {
+      Moyenne: "",
+      Remarque: "",
+      Reclamation: ""
+    },
     created: today
   };
 

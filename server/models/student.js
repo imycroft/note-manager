@@ -1,28 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 //const ObjectId = Schema.ObjectId;
 
 const StudentSchema = new Schema({
- 
   matricule: String,
   firstname: String,
   lastname: String,
   password: String,
-  
-  notes: [
+
+  modules: [
     {
       module: String,
-      note: Number
+      note: Number,
+      pv: String
     }
   ],
-  reclamation: [
-    {
-      module: String,
-      PV: String,
-      Value: String
-    }
-  ],
+  PV_final: {
+    Moyenne: Number,
+    Remarque: String,
+    Reclamation: String
+  },
   created: String
 });
 
-module.exports = Student = mongoose.model('students', StudentSchema);
+module.exports = Student = mongoose.model("students", StudentSchema);

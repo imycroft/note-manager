@@ -34,11 +34,10 @@ ProtectedRoutes.get("/marks", async (req, res) => {
   const studentData = req.authData;
   const student = await Student.find(
     { matricule: studentData.matricule },
-    "matricule notes"
+    "matricule modules PV_final"
   );
   res.send(student);
 });
-
 
 //Consulter note par matiere
 ProtectedRoutes.get("/marks/:module", async (req, res) => {
@@ -46,9 +45,20 @@ ProtectedRoutes.get("/marks/:module", async (req, res) => {
   const module = req.params.module; //TODO: check if not null and is a valid module
   const student = await Student.find(
     { matricule: studentData.matricule },
-    { notes: { $elemMatch: { module } } }
+    { modules: { $elemMatch: { module } } }
   );
   res.send(student);
+});
+
+//Déposer une reclamation pour une matiere
+ProtectedRoutes.post("/pv/:module", async (req, res) => {
+  const studentData = req.authData; // Get student info from the token
+  const module = req.params.module.toUpperCase(); //TODO: check if not null and is a valid module
+  const updatedNotePV = await Student.updateOne(
+    { matricule: studentData.matricule, "modules.module": module },
+    { $set: { "modules.$.pv": req.body.pv } } 
+  );
+  res.send(updatedNotePV);
 });
 
 module.exports = ProtectedRoutes;
