@@ -1,10 +1,8 @@
 const express = require("express");
-const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const Admin = require("../models/admin");
 const Professor = require("../models/professor");
-
+const Responsable = require("../models/responsable");
 const ProtectedRoutes = express.Router();
 ProtectedRoutes.use((req, res, next) => {
   // check header for the token
@@ -15,7 +13,9 @@ ProtectedRoutes.use((req, res, next) => {
     // verifies secret and checks if the token is expired
     jwt.verify(token, process.env.ADMIN_SECRET_KEY, (err, authData) => {
       if (err) {
-        return res.json({ message: "invalid token" });
+        return res.json({
+          message: "invalid token"
+        });
       } else {
         // if everything is good, save to request for use in other routes
         req.authData = authData;
@@ -30,7 +30,55 @@ ProtectedRoutes.use((req, res, next) => {
     });
   }
 });
-// Create new admin #delete or comment the function after the creation !
+
+// Create new responsable
+ProtectedRoutes.post("/responsables", async (req, res) => {
+  Responsable.countDocuments({}, function(err, count) {
+    console.log("Number of resps: ", count);
+    if (count == 0) {
+      const today = new Date();
+      const respData = {
+        matricule: req.body.matricule,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        password: "",
+        created: today
+      };
+      bcrypt.hash(req.body.password, 10, function(err, hash) {
+        respData.password = hash;
+        Responsable.create(respData)
+          .then(resp => {
+            res.json({
+              status: resp.matricule + " registred"
+            });
+          })
+          .catch(err => {
+            res.send("Error: " + err);
+          });
+      });
+    } else res.status(403).send({ error: "Can't create more responsables" });
+  });
+});
+
+// Delete responsable #with care
+ProtectedRoutes.delete("/responsables/:matricule", async (req, res) => {
+  await Responsable.findOneAndRemove(
+    {
+      matricule: req.params.matricule
+    },
+    (err, user) => {
+      if (err) res.send(err);
+      else {
+        if (!user) res.send({ error: "Responsable not found" });
+        else
+        res.send({
+          success: true,
+          user
+        });
+      }
+    }
+  );
+});
 
 // Create new professor
 ProtectedRoutes.post("/professors", async (req, res) => {
@@ -63,33 +111,14 @@ ProtectedRoutes.post("/professors", async (req, res) => {
             });
         });
       } else {
-        res.json({ error: "Professor already exists" });
+        res.json({
+          error: "Professor already exists"
+        });
       }
     })
     .catch(err => {
       res.send("Error: " + err);
     });
-});
-
-//
-ProtectedRoutes.get("/marks", async (req, res) => {
-  const studentData = req.authData;
-  const student = await Student.find(
-    { matricule: studentData.matricule },
-    "matricule notes"
-  );
-  res.send(student);
-});
-
-//Consulter note par matiere
-ProtectedRoutes.get("/marks/:module", async (req, res) => {
-  const studentData = req.authData;
-  const module = req.params.module; //TODO: check if not null and is a valid module
-  const student = await Student.find(
-    { matricule: studentData.matricule },
-    { notes: { $elemMatch: { module } } }
-  );
-  res.send(student);
 });
 
 module.exports = ProtectedRoutes;

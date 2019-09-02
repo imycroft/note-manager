@@ -10,56 +10,6 @@ students.use(cors());
 
 process.env.SECRET_KEY = "l!F0t4Ch";
 
-students.post("/register", (req, res) => {
-  const today = new Date();
-  const studentData = {
-    matricule: req.body.matricule,
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    password: '',
-    modules: [
-      { module: "AAW", note: "", pv: "" },
-      { module: "MSSC", note: "", pv: "" },
-      { module: "SRI", note: "", pv: "" },
-      { module: "IGR", note: "", pv: "" },
-      { module: "MTS", note: "", pv: "" },
-      { module: "ANGLAIS", note: "", pv: "" },
-      { module: "GCC", note: "", pv: "" },
-      { module: "CSE", note: "", pv: "" }
-    ],
-    PV_final: {
-      Moyenne: "",
-      Remarque: "",
-      Reclamation: ""
-    },
-    created: today
-  };
-
-  Student.findOne({
-    matricule: req.body.matricule
-  })
-    .then(student => {
-      if (!student) {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-          studentData.password = hash;
-          Student.create(studentData)
-            .then(student => {
-              res.json({
-                status: student.matricule + " registred"
-              });
-            })
-            .catch(err => {
-              res.send("Error: " + err);
-            });
-        });
-      } else {
-        res.json({ error: "Student already exists" });
-      }
-    })
-    .catch(err => {
-      res.send("Error: " + err);
-    });
-});
 
 //use of async/await
 students.post("/login", async (req, res) => {

@@ -8,10 +8,9 @@ const ProtectedRoutes = express.Router();
 ProtectedRoutes.use((req, res, next) => {
   // check header for the token
   var token = req.headers["access-token"];
-
   // decode token
   if (token) {
-    // verifies secret and checks if the token is expired
+    // verifies secret and checks if the token has expired
     jwt.verify(token, process.env.SECRET_KEY, (err, authData) => {
       if (err) {
         return res.json({ message: "invalid token" });

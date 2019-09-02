@@ -10,15 +10,22 @@ const mongoUrl = "mongodb://localhost:27017/notedb";
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
+mongoose.set('useFindAndModify', false)
 //protected routes
 
 //admin protected route
 const  Admin = require("./routes/admin") 
 app.use('/administration', Admin);
-
 //admin login & register
 const Login = require("./routes/login")
 app.use('/admin', Login)
+
+//responsable route
+const  Responsable = require("./routes/responsable") 
+app.use('/responsable', Responsable);
+//responsable protected route
+const  protectedResponsable = require("./routes/protected-responsable") 
+app.use('/api/responsable', protectedResponsable);
 
 //professor route
 const professors = require("./routes/professor");
