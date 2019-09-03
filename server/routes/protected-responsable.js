@@ -29,7 +29,7 @@ ProtectedRoutes.use((req, res, next) => {
     });
   }
 });
-!// Create new student
+// Create new student
 ProtectedRoutes.post("/students", (req, res) => {
   const today = new Date();
   const studentData = {
@@ -79,6 +79,39 @@ ProtectedRoutes.post("/students", (req, res) => {
     .catch(err => {
       res.send("Error: " + err);
     });
+});
+
+// Delete a student
+ProtectedRoutes.delete("/students/:matricule", async (req, res) => {
+  await Student.findOneAndRemove(
+    {
+      matricule: req.params.matricule
+    },
+    (err, user) => {
+      if (err) res.send(err);
+      else {
+        if (!user) res.status(404).send({ error: "Student not found" });
+        else
+          res.send({
+            success: true,
+            user
+          });
+      }
+    }
+  );
+});
+
+// Show Final PV of a student
+ProtectedRoutes.get("/students/pv/:matricule", async (req, res) => {
+  const student = await Student.findOne({
+    matricule: req.params.matricule
+  }, "PV_final matricule firstname lastname");
+  if(student)
+  res.send(student)
+  else
+  res.status(404).send({
+    error: 'Student not found'
+  })
 });
 
 module.exports = ProtectedRoutes;

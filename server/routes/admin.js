@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const Professor = require("../models/professor");
 const Responsable = require("../models/responsable");
 const ProtectedRoutes = express.Router();
+
 ProtectedRoutes.use((req, res, next) => {
   // check header for the token
   var token = req.headers["access-token"];
@@ -13,7 +14,7 @@ ProtectedRoutes.use((req, res, next) => {
     // verifies secret and checks if the token is expired
     jwt.verify(token, process.env.ADMIN_SECRET_KEY, (err, authData) => {
       if (err) {
-        return res.json({
+        return res.status(403).send({
           message: "invalid token"
         });
       } else {
@@ -25,7 +26,7 @@ ProtectedRoutes.use((req, res, next) => {
   } else {
     // if there is no token
 
-    res.send({
+    res.status(403).send({
       message: "No token provided."
     });
   }
@@ -60,7 +61,7 @@ ProtectedRoutes.post("/responsables", async (req, res) => {
   });
 });
 
-// Delete responsable #with care
+// Delete responsable 
 ProtectedRoutes.delete("/responsables/:matricule", async (req, res) => {
   await Responsable.findOneAndRemove(
     {
@@ -69,7 +70,7 @@ ProtectedRoutes.delete("/responsables/:matricule", async (req, res) => {
     (err, user) => {
       if (err) res.send(err);
       else {
-        if (!user) res.send({ error: "Responsable not found" });
+        if (!user) res.status(404).send({ error: "Responsable not found" });
         else
         res.send({
           success: true,
@@ -119,6 +120,26 @@ ProtectedRoutes.post("/professors", async (req, res) => {
     .catch(err => {
       res.send("Error: " + err);
     });
+});
+
+// Delete a professor 
+ProtectedRoutes.delete("/professors/:matricule", async (req, res) => {
+  await Professor.findOneAndRemove(
+    {
+      matricule: req.params.matricule
+    },
+    (err, user) => {
+      if (err) res.send(err);
+      else {
+        if (!user) res.status(404).send({ error: "Professor not found" });
+        else
+        res.send({
+          success: true,
+          user
+        });
+      }
+    }
+  );
 });
 
 module.exports = ProtectedRoutes;
