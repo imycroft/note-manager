@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -29,6 +30,17 @@ ProtectedRoutes.use((req, res, next) => {
     });
   }
 });
+
+//Get responsible profile
+ProtectedRoutes.get("/", async (req, res) => {
+  const responsibleData = req.authData;
+  const responsible = await Responsable.findOne(
+    { matricule: responsibleData.matricule },
+    "matricule firstname lastname"
+  );
+  res.send(responsible);
+});
+
 // Create new student
 ProtectedRoutes.post("/students", (req, res) => {
   const today = new Date();

@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
@@ -29,9 +30,19 @@ ProtectedRoutes.use((req, res, next) => {
   }
 });
 
+//Get student profile
+ProtectedRoutes.get("/", async (req, res) => {
+  const studentData = req.authData;
+  const student = await Student.findOne(
+    { matricule: studentData.matricule },
+    "matricule firstname lastname"
+  );
+  res.send(student);
+});
+
 ProtectedRoutes.get("/marks", async (req, res) => {
   const studentData = req.authData;
-  const student = await Student.find(
+  const student = await Student.findOne(
     { matricule: studentData.matricule },
     "matricule modules PV_final"
   );
@@ -55,9 +66,9 @@ ProtectedRoutes.post("/pv/:module", async (req, res) => {
   const module = req.params.module.toUpperCase(); //TODO: check if not null and is a valid module
   const updatedNotePV = await Student.updateOne(
     { matricule: studentData.matricule, "modules.module": module },
-    { $set: { "modules.$.pv": req.body.pv } } 
+    { $set: { "modules.$.pv": req.body.pv } }
   );
-  res.send(updatedNotePV);
+  res.json({ updatedNotePV });
 });
 
 module.exports = ProtectedRoutes;

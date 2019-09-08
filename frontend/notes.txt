@@ -1,0 +1,15 @@
+db.students.update(
+ {'matricule': '1996.xx.xx'},
+ { $set: { 'notes': [
+    { 'module' : 'AAW', 'note': 12 },
+    { 'module' : 'MSSC', 'note': 15 },
+    { 'module' : 'SRI', 'note': 11 },
+    { 'module' : 'IGR', 'note': 08 },
+    { 'module' : 'MTS', 'note': 13 },
+    { 'module' : 'ANGLAIS', 'note': 18 },
+    { 'module' : 'GCC', 'note': 11.5 },
+    { 'module' : 'CSE', 'note': 14 }
+    ]}
+    }
+    )
+

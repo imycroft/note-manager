@@ -53,7 +53,7 @@ admins.post("/login", async (req, res) => {
       let token = jwt.sign(payload, process.env.ADMIN_SECRET_KEY, {
         expiresIn: 1440
       });
-      res.send(token);
+      res.send({token});
     } else {
       res.json({ error: "Username or password incorrect " });
     }

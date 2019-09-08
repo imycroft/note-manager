@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Professor = require("../models/professor");
 const Responsable = require("../models/responsable");
+const Admin = require('../models/admin')
 const ProtectedRoutes = express.Router();
 
 ProtectedRoutes.use((req, res, next) => {
@@ -30,6 +31,16 @@ ProtectedRoutes.use((req, res, next) => {
       message: "No token provided."
     });
   }
+});
+
+//Get admin profile
+ProtectedRoutes.get("/", async (req, res) => {
+  const adminData = req.authData;
+  const admin = await Admin.findOne(
+    { matricule: adminData.matricule },
+    "matricule firstname lastname"
+  );
+  res.send(admin);
 });
 
 // Create new responsable

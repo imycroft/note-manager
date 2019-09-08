@@ -29,6 +29,15 @@ ProtectedRoutes.use((req, res, next) => {
   }
 });
 
+//Get professor profile
+ProtectedRoutes.get("/", async (req, res) => {
+  const professorData = req.authData;
+  const professor = await Professor.findOne(
+    { matricule: professorData.matricule },
+    "matricule firstname lastname"
+  );
+  res.send(professor);
+});
 // Prof get his module's notes
 ProtectedRoutes.get("/notes/:module", async (req, res) => {
   const avalableModules = await Professor.find(
