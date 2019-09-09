@@ -14,6 +14,16 @@
         </v-list-item>
       </v-list>
     </v-menu>
+    <v-menu offset-y v-if="$store.state.responsibleLogged">
+      <template v-slot:activator="{ on }">
+        <v-btn color="grey" dark v-on="on">Manage</v-btn>
+      </template>
+      <v-list>
+        <v-list-item v-for="(item, index) in respItems" :key="index"  router :to="item.route">
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
     <!-- <div class="flex-grow-1"></div> -->
 
     <v-toolbar-items v-if="$store.state.studentLogged">
@@ -50,6 +60,10 @@ export default {
       items: [
         { title: "Manage students", route: "/admin/manage-students" },
         { title: "Manage responsibles" }
+      ],
+      respItems: [
+         { title: "Manage students", route: "/responsibles/manage-students" },
+        { title: "Manage professors" }
       ]
     };
   },

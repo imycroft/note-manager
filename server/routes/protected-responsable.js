@@ -98,6 +98,16 @@ ProtectedRoutes.post("/students", (req, res) => {
     });
 });
 
+// Edit a Student
+ProtectedRoutes.put("/students/", async (req, res) => {
+  const student = await Student.updateOne(
+    { matricule: req.body.matricule },
+    { $set: { firstname: req.body.firstname, lastname: req.body.lastname } }
+  );
+  res.send({ student });
+});
+
+
 // Delete a student
 ProtectedRoutes.delete("/students/:matricule", async (req, res) => {
   await Student.findOneAndRemove(
@@ -124,7 +134,7 @@ ProtectedRoutes.get("/students/pv/:matricule", async (req, res) => {
     matricule: req.params.matricule
   }, "PV_final matricule firstname lastname");
   if(student)
-  res.send(student)
+  res.send(student);
   else
   res.status(404).send({
     error: 'Student not found'

@@ -11,6 +11,7 @@ import professorHome from "./views/professors/home.vue";
 //responsibles imports
 import responsibleLogin from "./views/responsibles/login.vue";
 import responsibleHome from "./views/responsibles/home.vue"; 
+import manageResponsible from "./views/responsibles/manageStudents.vue";
 
 //admin imports
 import adminLogin from "./views/admin/login.vue";
@@ -64,6 +65,12 @@ const router = new Router({
         path: "/responsibles/home",
         name: "responsibleHome",
         component: responsibleHome
+      },
+      //
+      {
+        path: "/responsibles/manage-students",
+        name: "manageResponsible",
+        component: manageResponsible
       },
       //Admin routes
       {
