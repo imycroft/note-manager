@@ -1,4 +1,3 @@
-/*jshint esversion: 8 */
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -39,6 +38,12 @@ ProtectedRoutes.get("/", async (req, res) => {
     "matricule firstname lastname"
   );
   res.send(responsible);
+});
+
+// Get all students
+ProtectedRoutes.get('/students/all', async (req, res) => {
+  const students = await Student.find({}, {password:0});
+  res.send({students});
 });
 
 // Create new student

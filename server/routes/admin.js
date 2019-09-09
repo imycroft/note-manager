@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Professor = require("../models/professor");
 const Responsable = require("../models/responsable");
-const Admin = require('../models/admin')
+const Admin = require("../models/admin");
 const ProtectedRoutes = express.Router();
 
 ProtectedRoutes.use((req, res, next) => {
@@ -43,6 +43,73 @@ ProtectedRoutes.get("/", async (req, res) => {
   res.send(admin);
 });
 
+// Get all students
+ProtectedRoutes.get("/students/all", async (req, res) => {
+  const students = await Student.find({}, { password: 0 });
+  res.send({ students });
+});
+
+// Create new student
+ProtectedRoutes.post("/students", (req, res) => {
+  const today = new Date();
+  const studentData = {
+    matricule: req.body.matricule,
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    password: "",
+    modules: [
+      { module: "AAW", note: "", pv: "" },
+      { module: "MSSC", note: "", pv: "" },
+      { module: "SRI", note: "", pv: "" },
+      { module: "IGR", note: "", pv: "" },
+      { module: "MTS", note: "", pv: "" },
+      { module: "ANGLAIS", note: "", pv: "" },
+      { module: "GCC", note: "", pv: "" },
+      { module: "CSE", note: "", pv: "" }
+    ],
+    PV_final: {
+      Moyenne: "",
+      Remarque: "",
+      Reclamation: ""
+    },
+    created: today
+  };
+
+  Student.findOne({
+    matricule: req.body.matricule
+  })
+    .then(student => {
+      if (!student) {
+        bcrypt.hash(req.body.password, 10, (err, hash) => {
+          studentData.password = hash;
+          Student.create(studentData)
+            .then(student => {
+              res.json({
+                status: student.matricule + " registred"
+              });
+            })
+            .catch(err => {
+              res.send("Error: " + err);
+            });
+        });
+      } else {
+        res.json({ error: "Student already exists" });
+      }
+    })
+    .catch(err => {
+      res.send("Error: " + err);
+    });
+});
+
+// Edit a Student
+ProtectedRoutes.put("/students/", async (req, res) => {
+  const student = await Student.updateOne(
+    { matricule: req.body.matricule },
+    { $set: { firstname: req.body.firstname, lastname: req.body.lastname } }
+  );
+  res.send({ student });
+});
+
 // Create new responsable
 ProtectedRoutes.post("/responsables", async (req, res) => {
   Responsable.countDocuments({}, function(err, count) {
@@ -72,7 +139,7 @@ ProtectedRoutes.post("/responsables", async (req, res) => {
   });
 });
 
-// Delete responsable 
+// Delete responsable
 ProtectedRoutes.delete("/responsables/:matricule", async (req, res) => {
   await Responsable.findOneAndRemove(
     {
@@ -83,10 +150,10 @@ ProtectedRoutes.delete("/responsables/:matricule", async (req, res) => {
       else {
         if (!user) res.status(404).send({ error: "Responsable not found" });
         else
-        res.send({
-          success: true,
-          user
-        });
+          res.send({
+            success: true,
+            user
+          });
       }
     }
   );
@@ -133,7 +200,7 @@ ProtectedRoutes.post("/professors", async (req, res) => {
     });
 });
 
-// Delete a professor 
+// Delete a professor
 ProtectedRoutes.delete("/professors/:matricule", async (req, res) => {
   await Professor.findOneAndRemove(
     {
@@ -144,10 +211,10 @@ ProtectedRoutes.delete("/professors/:matricule", async (req, res) => {
       else {
         if (!user) res.status(404).send({ error: "Professor not found" });
         else
-        res.send({
-          success: true,
-          user
-        });
+          res.send({
+            success: true,
+            user
+          });
       }
     }
   );

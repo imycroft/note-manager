@@ -1,4 +1,4 @@
-omm<template>
+<template>
   <v-toolbar app>
     <v-toolbar-title>
       <v-btn flat v-on:click="home()">{{ $store.state.firstname }} {{ $store.state.lastname }}</v-btn>
@@ -9,7 +9,7 @@ omm<template>
         <v-btn color="grey" dark v-on="on">Administration</v-btn>
       </template>
       <v-list>
-        <v-list-item v-for="(item, index) in items" :key="index" @click router :to="item.route">
+        <v-list-item v-for="(item, index) in items" :key="index"  router :to="item.route">
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
