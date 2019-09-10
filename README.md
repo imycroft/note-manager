@@ -1,16 +1,16 @@
 # note-manager
+### For the backend just type
+    $npm install
+    $npm run dev
+### Make sure mongodb is runing
 
-# For the backend just type
-$npm install 
-$npm run dev
+### For the frontnd :
 
-# Make sure mongodb is runing
+    $cd frontend
+    $npm install
+    $npm run serve
 
-# For the frontnd :
-$cd frontend
-$npm install
-$npm run serve
+  
 
-#make sure port 3000 & 8080 are free
-
-#ENJOY
+### Make sure port 3000 & 8080 are free
+## ENJOY
